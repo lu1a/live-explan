@@ -4,11 +4,14 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/lu1a/live-explan/internal/util"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/time/rate"
 )
+
+var limiter = rate.NewLimiter(rate.Every(time.Hour/10), 1)
 
 func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 	router := chi.NewRouter()
@@ -29,10 +32,18 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 	})
 
 	router.Post("/contact", func(writer http.ResponseWriter, request *http.Request) {
+		if !limiter.Allow() {
+			http.Error(writer, "Too many requests", http.StatusTooManyRequests)
+			return
+		}
+
 		sender_address := request.FormValue("sender_address")
 		subject := request.FormValue("subject")
 		content := request.FormValue("content")
-		util.EmailHandler(writer, log, sender_address, subject, content)
+		if _, writeErr := writer.Write([]byte(sender_address + " " + subject + " " + content)); writeErr != nil {
+			log.Error("Error writing OK message:", writeErr)
+		}
+		// util.EmailHandler(writer, log, sender_address, subject, content)
 	})
 
 	// create an HTTP server
