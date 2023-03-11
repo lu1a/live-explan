@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/lu1a/live-explan/internal/util"
 	"github.com/sirupsen/logrus"
 )
 
@@ -25,6 +26,13 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 			log.Fatal(err)
 		}
 		http.ServeFile(writer, request, filePath)
+	})
+
+	router.Post("/contact", func(writer http.ResponseWriter, request *http.Request) {
+		sender_address := request.FormValue("sender_address")
+		subject := request.FormValue("subject")
+		content := request.FormValue("content")
+		util.EmailHandler(writer, log, sender_address, subject, content)
 	})
 
 	// create an HTTP server

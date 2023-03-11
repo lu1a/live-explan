@@ -3,17 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
+	"github.com/lu1a/live-explan/config"
 	"github.com/lu1a/live-explan/internal/globals"
-)
-
-var (
-	mainConfig = viper.New()
-	envPrefix  = ""
 )
 
 var rootCmd = &cobra.Command{
@@ -21,8 +15,8 @@ var rootCmd = &cobra.Command{
 	Short:         "Lewis Live Explanation",
 	SilenceUsage:  true,
 	SilenceErrors: true,
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		return loadConfiguration()
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		config.Init()
 	},
 }
 
@@ -55,14 +49,6 @@ var VersionCmd = &cobra.Command{
 		_, _ = fmt.Fprintf(os.Stdout, "Version: %s\n", globals.Version)
 		_, _ = fmt.Fprintf(os.Stdout, "Timestamp: %s\n", globals.VersionTime)
 	},
-}
-
-// Loads the configuration from env.
-func loadConfiguration() error {
-	mainConfig.SetEnvPrefix(envPrefix)
-	mainConfig.SetEnvKeyReplacer(strings.NewReplacer("-", "_", ".", "_"))
-	mainConfig.AutomaticEnv()
-	return nil
 }
 
 func init() {
