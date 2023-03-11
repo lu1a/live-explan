@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Lewis Torrington</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 0;
+			background-color: #272727;
+			font-family: "Fira Code", monospace;
+		}
+
+		.terminal {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			border: 1px solid #333333;
+			border-radius: 5px;
+			overflow: hidden;
+			width: 80%;
+			height: 80%;
+			display: flex;
+			flex-direction: column;
+
+			transition: height 0.2s ease, width 0.2s ease;
+		}
+
+		.top-bar {
+			display: flex;
+			flex-direction: row;
+			background-color: #444444;
+			height: 30px;
+			align-items: center;
+			padding: 0 10px;
+			user-select: none;
+		}
+
+		.title {
+			color: white;
+			font-size: 12px;
+			margin-left: 10px;
+			flex-grow: 1;
+		}
+
+		.button {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-right: 5px;
+			user-select: none;
+		}
+
+		.red {
+			background-color: #ff5f56;
+		}
+
+		.grey {
+			background-color: #c6c6c6;
+		}
+
+		.green {
+			background-color: #5ac95a;
+		}
+
+		.tab-bar {
+			display: flex;
+			flex-direction: row;
+			background-color: #444444;
+			height: 20px;
+			align-items: center;
+			padding: 0 10px;
+			user-select: none;
+		}
+
+		.tab {
+			color: white;
+			font-size: 12px;
+			margin-right: 10px;
+			user-select: none;
+			cursor: pointer;
+		}
+
+		.tab.active {
+			color: #9cdcfe;
+			border-bottom: 1px solid #9cdcfe;
+		}
+
+		.terminal-content {
+			position: absolute;
+			top: 50px;
+			left: 0;
+			width: 100%;
+			height: calc(100% - 30px);
+			overflow-y: scroll;
+			padding: 10px;
+		}
+
+		.terminal-maximized {
+			width: 100%;
+			height: 100%;
+		}
+
+		.command {
+			color: #00ff00;
+		}
+
+		.output {
+			color: white;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="terminal">
+		<div class="top-bar">
+			<div class="button red terminal-red"></div>
+			<div class="button grey terminal-grey"></div>
+			<div class="button green terminal-green"></div>
+			<div class="title"></div>
+		</div>
+		<div class="tab-bar">
+			<div class="tab active">Description</div>
+			<div class="tab" onclick="location.href='/contact'">Contact</div>
+			<div class="tab" onclick="location.href='/resources'">Resources</div>
+		</div>
+		<div class="terminal-content">
+			<div class="output" id="welcome">Welcome to my page!</div>
+			<div class="output">$ echo "Hello, World!"</div>
+			<div class="output">Hello, World!</div>
+			<div class="output">$ ls</div>
+			<div class="output">file1.txt file2.txt</div>
+			<div class="command">$ cat file1.txt</div>
+			<div class="output">Hello, my name is Lewis and this is my page.</div>
+		</div>
+	</div>
+</body>
+<script>
+	// Set the title in the top bar
+	document.querySelector(".title").textContent = document.title;
+
+	// get current date and time in ISO format
+	var now = new Date().toISOString();
+
+	// display date and time in desired format
+	var output = document.getElementById("welcome");
+	output.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " Welcome to my page!";
+
+	// get elements
+	var terminal = document.querySelector(".terminal");
+	var topbar = document.querySelector(".terminal-topbar");
+	var redButton = document.querySelector(".terminal-red");
+	var greyButton = document.querySelector(".terminal-grey");
+	var greenButton = document.querySelector(".terminal-green");
+	var content = document.querySelector(".terminal-content");
+
+	// handle red button click
+	redButton.addEventListener("click", function () {
+		window.close();
+	});
+
+	// handle grey button click
+	greyButton.addEventListener("click", function () {
+		// do nothing
+	});
+
+	// handle green button click
+	greenButton.addEventListener("click", function () {
+		console.log("hi!");
+		if (terminal.classList.contains("terminal-maximized")) {
+			// minimize
+			terminal.classList.remove("terminal-maximized");
+			content.style.height = "calc(100% - 30px)";
+		} else {
+			// maximize
+			terminal.classList.add("terminal-maximized");
+			content.style.height = "calc(100% - 60px)";
+		}
+	});
+</script>
+
+</html>
