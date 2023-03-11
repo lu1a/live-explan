@@ -114,6 +114,26 @@
 		.terminal-content [data-tab]:not(.active) {
 			display: none;
 		}
+
+		.input-container {
+			display: flex;
+			margin-bottom: 5px;
+		}
+
+		/* .input-container>span {
+			flex-grow: 1;
+		} */
+
+		.input-container textarea,
+		.input-container input[type="text"] {
+			margin-left: 10px;
+			background-color: transparent;
+			border: none;
+			width: 100%;
+			font-family: "Fira Code", monospace;
+			font-size: 16px;
+			color: white;
+		}
 	</style>
 </head>
 
@@ -139,7 +159,21 @@
 			<div class="command active" data-tab="description">$ cat file1.txt</div>
 			<div class="output active" data-tab="description">Hello, my name is Lewis and this is my page.</div>
 
-			<div class="output" data-tab="contact">Contact form goes here.</div>
+			<div class="output" data-tab="contact">$ Send a msg to Lewis</div>
+			<div class="output" data-tab="contact">&nbsp;&nbsp;Subject: Contact request</div>
+			<div class="output" data-tab="contact">
+				<div class="input-container">
+					<span>&nbsp;&nbsp;Message: </span>
+					<span><textarea></textarea></span>
+				</div>
+			</div>
+			<div class="command" data-tab="contact">
+				<div class="input-container">
+					<span>&nbsp;&nbsp;Send? (y/n): </span>
+					<span><input type="text"></span>
+				</div>
+			</div>
+
 			<div class="output" data-tab="resources">Resource links and information go here.</div>
 		</div>
 	</div>
