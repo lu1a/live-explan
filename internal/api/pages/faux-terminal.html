@@ -134,6 +134,10 @@
 			font-size: 16px;
 			color: white;
 		}
+
+		ul {
+			list-style-type: '- ';
+		}
 	</style>
 </head>
 
@@ -157,20 +161,38 @@
 			<div class="output active" data-tab="description">$ ls</div>
 			<div class="output active" data-tab="description">file1.txt file2.txt</div>
 			<div class="command active" data-tab="description">$ cat file1.txt</div>
-			<div class="output active" data-tab="description">Hello, my name is Lewis and this is my page.</div>
+			<br />
+			<div class="output active" data-tab="description">
+				Hello, my name is Lewis Torrington and this is my page.
+				About me:
+				<ul style="margin: 0;padding-inline-start: 20px;">
+					<li>Living in Finland 🇦🇺 -> 🇫🇮</li>
+					<li>Fullstack developer:</li>
+					<ul>
+						<li>Backend: Go, Python, C++ (learning Rust)</li>
+						<li>Frontend: React, Vue, WASM, etc</li>
+					</ul>
+				</ul>
+			</div>
 
-			<div class="output" data-tab="contact">$ Send a msg to Lewis</div>
-			<div class="output" data-tab="contact">&nbsp;&nbsp;Subject: Contact request</div>
+			<div class="output" data-tab="contact">$ send_msg_to_lewis</div>
+			<div class="output" data-tab="contact">&nbsp;&nbsp;-subject: Contact request</div>
 			<div class="output" data-tab="contact">
 				<div class="input-container">
-					<span>&nbsp;&nbsp;Message: </span>
+					<span>&nbsp;&nbsp;-email_address: </span>
+					<span><input style="width:36rem" type="text"></span>
+				</div>
+			</div>
+			<div class="output" data-tab="contact">
+				<div class="input-container">
+					<span>&nbsp;&nbsp;-message: </span>
 					<span><textarea></textarea></span>
 				</div>
 			</div>
 			<div class="command" data-tab="contact">
 				<div class="input-container">
 					<span>&nbsp;&nbsp;Send? (y/n): </span>
-					<span><input type="text"></span>
+					<span><input style="width:2rem" type="text"></span>
 				</div>
 			</div>
 
