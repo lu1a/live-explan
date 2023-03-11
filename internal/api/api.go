@@ -19,9 +19,8 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 		}
 	})
 
-	// hello world
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		filePath, err := filepath.Abs("./internal/api/pages/helloworld.html")
+		filePath, err := filepath.Abs("./internal/api/pages/faux-terminal.html")
 		if err != nil {
 			log.Fatal(err)
 		}

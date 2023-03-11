@@ -7,11 +7,12 @@
 		body {
 			margin: 0;
 			padding: 0;
-			background-color: #272727;
+			background: linear-gradient(to top, #040308, #AD4A28, #DD723C, #FC7001, #DCB697, #9BA5AE, #3E5879, #020B1A);
 			font-family: "Fira Code", monospace;
 		}
 
 		.terminal {
+			background-color: #272727;
 			position: absolute;
 			top: 50%;
 			left: 50%;
@@ -109,6 +110,10 @@
 		.output {
 			color: white;
 		}
+
+		.terminal-content [data-tab]:not(.active) {
+			display: none;
+		}
 	</style>
 </head>
 
@@ -121,18 +126,21 @@
 			<div class="title"></div>
 		</div>
 		<div class="tab-bar">
-			<div class="tab active">Description</div>
-			<div class="tab" onclick="location.href='/contact'">Contact</div>
-			<div class="tab" onclick="location.href='/resources'">Resources</div>
+			<div class="tab active" data-tab="description">Description</div>
+			<div class="tab" data-tab="contact">Contact</div>
+			<div class="tab" data-tab="resources">Resources</div>
 		</div>
 		<div class="terminal-content">
-			<div class="output" id="welcome">Welcome to my page!</div>
-			<div class="output">$ echo "Hello, World!"</div>
-			<div class="output">Hello, World!</div>
-			<div class="output">$ ls</div>
-			<div class="output">file1.txt file2.txt</div>
-			<div class="command">$ cat file1.txt</div>
-			<div class="output">Hello, my name is Lewis and this is my page.</div>
+			<div class="output active" id="welcome">Welcome to my page!</div>
+			<div class="output active" data-tab="description">$ echo "Hello, World!"</div>
+			<div class="output active" data-tab="description">Hello, World!</div>
+			<div class="output active" data-tab="description">$ ls</div>
+			<div class="output active" data-tab="description">file1.txt file2.txt</div>
+			<div class="command active" data-tab="description">$ cat file1.txt</div>
+			<div class="output active" data-tab="description">Hello, my name is Lewis and this is my page.</div>
+
+			<div class="output" data-tab="contact">Contact form goes here.</div>
+			<div class="output" data-tab="resources">Resource links and information go here.</div>
 		</div>
 	</div>
 </body>
@@ -140,24 +148,22 @@
 	// Set the title in the top bar
 	document.querySelector(".title").textContent = document.title;
 
-	// get current date and time in ISO format
-	var now = new Date().toISOString();
-
 	// display date and time in desired format
-	var output = document.getElementById("welcome");
-	output.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " Welcome to my page!";
+	const welcomestr = document.getElementById("welcome");
+	const now = new Date().toISOString();
+	welcomestr.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " Welcome to my page!";
 
 	// get elements
-	var terminal = document.querySelector(".terminal");
-	var topbar = document.querySelector(".terminal-topbar");
-	var redButton = document.querySelector(".terminal-red");
-	var greyButton = document.querySelector(".terminal-grey");
-	var greenButton = document.querySelector(".terminal-green");
-	var content = document.querySelector(".terminal-content");
+	const terminal = document.querySelector(".terminal");
+	const redButton = document.querySelector(".terminal-red");
+	const greyButton = document.querySelector(".terminal-grey");
+	const greenButton = document.querySelector(".terminal-green");
+	const tabs = document.querySelectorAll('.tab');
+	const content = document.querySelector(".terminal-content");
 
 	// handle red button click
 	redButton.addEventListener("click", function () {
-		window.close();
+		alert("Close this tab in your browser as normal 🤷")
 	});
 
 	// handle grey button click
@@ -167,7 +173,6 @@
 
 	// handle green button click
 	greenButton.addEventListener("click", function () {
-		console.log("hi!");
 		if (terminal.classList.contains("terminal-maximized")) {
 			// minimize
 			terminal.classList.remove("terminal-maximized");
@@ -177,6 +182,21 @@
 			terminal.classList.add("terminal-maximized");
 			content.style.height = "calc(100% - 60px)";
 		}
+	});
+
+	tabs.forEach(tab => {
+		tab.addEventListener('click', () => {
+			const tabName = tab.getAttribute('data-tab');
+			const contentElements = document.querySelectorAll(`.terminal-content [data-tab]`);
+			tabs.forEach(t => t.classList.remove('active'));
+			contentElements.forEach(content => content.style.display = 'none');
+			tab.classList.add('active');
+			contentElements.forEach(content => {
+				if (content.getAttribute('data-tab') === tabName) {
+					content.style.display = 'block';
+				}
+			});
+		});
 	});
 </script>
 
