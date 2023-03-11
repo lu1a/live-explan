@@ -32,15 +32,26 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 	})
 
 	router.Post("/contact", func(writer http.ResponseWriter, request *http.Request) {
+		sender_address := request.FormValue("sender_address")
+		subject := request.FormValue("subject")
+		content := request.FormValue("content")
+
+		if sender_address == "" || content == "" {
+			http.Error(writer, "Required field(s) missing", http.StatusBadRequest)
+			return
+		}
+		if subject == "" {
+			subject = "Contact request"
+		}
+
 		if !limiter.Allow() {
 			http.Error(writer, "Too many requests", http.StatusTooManyRequests)
 			return
 		}
 
-		sender_address := request.FormValue("sender_address")
-		subject := request.FormValue("subject")
-		content := request.FormValue("content")
-		if _, writeErr := writer.Write([]byte(sender_address + " " + subject + " " + content)); writeErr != nil {
+		log.Info(sender_address + " " + subject + " " + content)
+		writer.WriteHeader(http.StatusOK)
+		if _, writeErr := writer.Write([]byte("OK")); writeErr != nil {
 			log.Error("Error writing OK message:", writeErr)
 		}
 		// util.EmailHandler(writer, log, sender_address, subject, content)

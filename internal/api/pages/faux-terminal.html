@@ -175,26 +175,32 @@
 				</ul>
 			</div>
 
-			<div class="output" data-tab="contact">$ send_msg_to_lewis</div>
-			<div class="output" data-tab="contact">&nbsp;&nbsp;-subject: Contact request</div>
-			<div class="output" data-tab="contact">
-				<div class="input-container">
-					<span>&nbsp;&nbsp;-email_address: </span>
-					<span><input style="width:36rem" type="text"></span>
+			<form id="contact-form" enctype="multipart/form-data">
+				<div class="output" data-tab="contact">$ send_msg_to_lewis</div>
+				<div class="output" data-tab="contact">&nbsp;&nbsp;-subject: Contact request</div>
+				<div class="output" data-tab="contact">
+					<div class="input-container">
+						<span>&nbsp;&nbsp;-email_address: </span>
+						<span><input style="width:36rem" type="text" name="sender_address"></span>
+					</div>
 				</div>
-			</div>
-			<div class="output" data-tab="contact">
-				<div class="input-container">
-					<span>&nbsp;&nbsp;-message: </span>
-					<span><textarea></textarea></span>
+				<div class="output" data-tab="contact">
+					<div class="input-container">
+						<span>&nbsp;&nbsp;-message: </span>
+						<span><textarea name="content"></textarea></span>
+					</div>
 				</div>
-			</div>
-			<div class="command" data-tab="contact">
-				<div class="input-container">
-					<span>&nbsp;&nbsp;Send? (y/n): </span>
-					<span><input style="width:2rem" type="text"></span>
+				<div class="command" data-tab="contact">
+					<div class="input-container">
+						<span>&nbsp;&nbsp;Send? (y/n): </span>
+						<span>
+							<button type="submit" name="send-cmd" value="y">y</button>
+							<button type="button" name="send-cmd" value="n">n</button>
+						</span>
+					</div>
 				</div>
-			</div>
+				<div class="output" id="message-container" data-tab="contact"></div>
+			</form>
 
 			<div class="output" data-tab="resources">Resource links and information go here.</div>
 		</div>
@@ -253,6 +259,42 @@
 				}
 			});
 		});
+	});
+
+	// Contact request below, trying to use as little BS as possible.
+
+	const form = document.querySelector('#contact-form');
+
+	form.addEventListener('submit', (event) => {
+		event.preventDefault(); // Prevent the default form submission
+
+		const formData = new FormData(form); // Get the form data
+		const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+
+		xhr.open('POST', '/contact'); // Set the request method and URL
+		xhr.onload = () => { // Define the callback for a successful request
+			const messageContainer = document.querySelector('#message-container');
+
+			if (xhr.status === 200) {
+				const successMsg = document.createElement('div');
+				successMsg.classList.add('msg-send-success');
+				successMsg.textContent = `$ Message sent successfully at ${new Date().toISOString()}.`;
+				messageContainer.appendChild(successMsg);
+			} else {
+				const errorMsg = document.createElement('div');
+				errorMsg.classList.add('msg-send-error');
+				if (xhr.status === 429) {
+					errorMsg.textContent = `$ ERROR sending message: too many requests.`;
+				} else if (xhr.status === 400) {
+					errorMsg.textContent = `$ ERROR sending message: missing required field(s).`;
+				} else {
+					errorMsg.textContent = `$ ERROR sending message at ${new Date().toISOString()}.`;
+				}
+
+				messageContainer.appendChild(errorMsg);
+			}
+		};
+		xhr.send(formData); // Send the form data in the request body
 	});
 </script>
 
