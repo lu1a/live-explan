@@ -10,11 +10,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content string) (bool, error) {
+func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content string) error {
 	token := config.MainConfig.GetString("TELEGRAM_TOKEN")
 	chatID := config.MainConfig.GetString("TELEGRAM_CHATID")
 	msg := "Subject: " + subject + "\r\n" +
-		"\r\n" +
 		content + "\r\n" +
 		"From " + sender_address
 	url := fmt.Sprintf("%s/sendMessage", fmt.Sprintf("https://api.telegram.org/bot%s", token))
@@ -29,18 +28,18 @@ func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content st
 		bytes.NewBuffer(body),
 	)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	// Close the request at the end
 	defer response.Body.Close()
 
 	if response.StatusCode < 200 && response.StatusCode >= 300 {
-		return false, fmt.Errorf("Bad response")
+		return fmt.Errorf("Bad response")
 	}
 
 	log.Info("A contact request was sent")
-	return true, nil
+	return nil
 }
 
 func RespondwithJSON(w http.ResponseWriter, log *logrus.Logger, code int, payload interface{}) {

@@ -46,11 +46,14 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 		}
 
 		if !limiter.Allow() {
-			http.Error(writer, "Too many requests", http.StatusTooManyRequests)
+			http.Error(writer, "Too many requests, please wait ~10 more minutes.", http.StatusTooManyRequests)
 			return
 		}
 
-		util.SendTelegramMessage(log, sender_address, subject, content)
+		err := util.SendTelegramMessage(log, sender_address, subject, content)
+		if err != nil {
+			http.Error(writer, "Something went wrong with my contacting service!", http.StatusInternalServerError)
+		}
 	})
 
 	// create an HTTP server
