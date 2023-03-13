@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/lu1a/live-explan/internal/util"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 )
@@ -49,12 +50,7 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 			return
 		}
 
-		log.Info(sender_address + " " + subject + " " + content)
-		writer.WriteHeader(http.StatusOK)
-		if _, writeErr := writer.Write([]byte("OK")); writeErr != nil {
-			log.Error("Error writing OK message:", writeErr)
-		}
-		// util.EmailHandler(writer, log, sender_address, subject, content)
+		util.EmailHandler(writer, log, sender_address, subject, content)
 	})
 
 	// create an HTTP server
