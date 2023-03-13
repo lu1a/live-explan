@@ -1,39 +1,46 @@
 package util
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"net/smtp"
-
-	"github.com/sirupsen/logrus"
 
 	"github.com/lu1a/live-explan/config"
+	"github.com/sirupsen/logrus"
 )
 
-func EmailHandler(w http.ResponseWriter, log *logrus.Logger, sender_address, subject, content string) {
-	lewis_email_address := config.MainConfig.GetString("LEWIS_EMAIL_ADDRESS")
-	lewis_email_password := config.MainConfig.GetString("LEWIS_EMAIL_PASSWORD")
-
-	// Set up authentication for sending email
-	auth := smtp.PlainAuth("", lewis_email_address, lewis_email_password, "smtp.gmail.com")
-
-	// Compose the email message
-	msg := "From: " + lewis_email_address + "\r\n" +
-		"To: recipient@gmail.com\r\n" +
-		"Subject: " + subject + "\r\n" +
+func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content string) (bool, error) {
+	token := config.MainConfig.GetString("TELEGRAM_TOKEN")
+	chatID := config.MainConfig.GetString("TELEGRAM_CHATID")
+	msg := "Subject: " + subject + "\r\n" +
 		"\r\n" +
 		content + "\r\n" +
 		"From " + sender_address
+	url := fmt.Sprintf("%s/sendMessage", fmt.Sprintf("https://api.telegram.org/bot%s", token))
+	body, _ := json.Marshal(map[string]string{
+		"chat_id": chatID,
+		"text":    msg,
+	})
 
-	// Send the email
-	err := smtp.SendMail("smtp.gmail.com:587", auth, lewis_email_address, []string{lewis_email_address}, []byte(msg))
+	response, err := http.Post(
+		url,
+		"application/json",
+		bytes.NewBuffer(body),
+	)
 	if err != nil {
-		RespondWithError(w, log, 500, err.Error())
-		return
+		return false, err
 	}
 
-	// Respond with a success message
-	RespondwithJSON(w, log, 200, "Email sent successfully")
+	// Close the request at the end
+	defer response.Body.Close()
+
+	if response.StatusCode < 200 && response.StatusCode >= 300 {
+		return false, fmt.Errorf("Bad response")
+	}
+
+	log.Info("A contact request was sent")
+	return true, nil
 }
 
 func RespondwithJSON(w http.ResponseWriter, log *logrus.Logger, code int, payload interface{}) {

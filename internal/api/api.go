@@ -50,7 +50,7 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 			return
 		}
 
-		util.EmailHandler(writer, log, sender_address, subject, content)
+		util.SendTelegramMessage(log, sender_address, subject, content)
 	})
 
 	// create an HTTP server
