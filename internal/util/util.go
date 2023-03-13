@@ -5,10 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/mail"
 
 	"github.com/lu1a/live-explan/config"
 	"github.com/sirupsen/logrus"
 )
+
+func IsValidEmail(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
 
 func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content string) error {
 	token := config.MainConfig.GetString("TELEGRAM_TOKEN")
@@ -30,9 +36,6 @@ func SendTelegramMessage(log *logrus.Logger, sender_address, subject, content st
 	if err != nil {
 		return err
 	}
-
-	// Close the request at the end
-	defer response.Body.Close()
 
 	if response.StatusCode < 200 && response.StatusCode >= 300 {
 		return fmt.Errorf("Bad response")

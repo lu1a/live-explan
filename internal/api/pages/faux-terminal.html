@@ -4,11 +4,18 @@
 <head>
 	<title>Lewis Torrington</title>
 	<style>
+		html {
+			font-size: 100%;
+			-ms-touch-action: manipulation;
+			touch-action: manipulation;
+		}
+
 		body {
 			margin: 0;
 			padding: 0;
 			background: linear-gradient(to top, #040308, #AD4A28, #DD723C, #FC7001, #DCB697, #9BA5AE, #3E5879, #020B1A);
 			font-family: "Fira Code", monospace;
+			font-size: 1rem;
 		}
 
 		.terminal {
@@ -32,7 +39,7 @@
 			display: flex;
 			flex-direction: row;
 			background-color: #444444;
-			height: 30px;
+			height: 2rem;
 			align-items: center;
 			padding: 0 10px;
 			user-select: none;
@@ -40,21 +47,22 @@
 
 		.title {
 			color: white;
-			font-size: 12px;
+			font-size: 1rem;
 			margin-left: 10px;
 			flex-grow: 1;
 		}
 
 		.button {
-			width: 12px;
-			height: 12px;
+			width: 0.7rem;
+			height: 0.7rem;
 			border-radius: 50%;
-			margin-right: 5px;
+			margin-right: 7px;
 			user-select: none;
 		}
 
 		.red {
-			background-color: #ff5f56;
+			background-color: #FF605C;
+			background-color: color(display-p3 1 0.4 0.36);
 		}
 
 		.grey {
@@ -62,35 +70,49 @@
 		}
 
 		.green {
-			background-color: #5ac95a;
+			background-color: #00CA4E;
+			background-color: color(display-p3 0 0.79 0.31);
 		}
 
 		.tab-bar {
 			display: flex;
 			flex-direction: row;
 			background-color: #444444;
-			height: 20px;
+			height: 1.9rem;
 			align-items: center;
-			padding: 0 10px;
+			padding-top: 0.4rem;
 			user-select: none;
 		}
 
 		.tab {
 			color: white;
-			font-size: 12px;
-			margin-right: 10px;
+			font-size: 0.9rem;
 			user-select: none;
 			cursor: pointer;
+			background-color: #444444;
+			border: none;
+			padding: 0.4rem 1rem;
+
+			transition: background-color 0.1s, color 0.1s;
 		}
 
 		.tab.active {
-			color: #9cdcfe;
-			border-bottom: 1px solid #9cdcfe;
+			background-color: #6e6e6e;
+		}
+
+		.tab:hover {
+			background-color: white;
+			color: black;
+		}
+
+		.tab:active {
+			background-color: grey;
+			color: white;
 		}
 
 		.terminal-content {
 			position: absolute;
-			top: 50px;
+			top: 70px;
 			left: 0;
 			width: 100%;
 			height: calc(100% - 30px);
@@ -105,6 +127,7 @@
 
 		.command {
 			color: #00ff00;
+			color: color(display-p3 0 1 0);
 		}
 
 		.output {
@@ -125,18 +148,36 @@
 		} */
 
 		.input-container textarea,
-		.input-container input[type="text"] {
+		.input-container input[type="email"] {
 			margin-left: 10px;
 			background-color: transparent;
 			border: none;
 			width: 100%;
 			font-family: "Fira Code", monospace;
-			font-size: 16px;
+			font-size: 1rem;
 			color: white;
 		}
 
 		ul {
 			list-style-type: '- ';
+		}
+
+		.cta {
+			background-color: transparent;
+			font-family: "Fira Code", monospace;
+			font-size: 1rem;
+			border: 1px solid #00ff00;
+			transition: background-color 0.1s, color 0.1s;
+		}
+
+		.cta:hover {
+			background-color: white;
+			color: black;
+		}
+
+		.cta:active {
+			background-color: grey;
+			color: white;
 		}
 	</style>
 </head>
@@ -150,9 +191,9 @@
 			<div class="title"></div>
 		</div>
 		<div class="tab-bar">
-			<div class="tab active" data-tab="description">Description</div>
-			<div class="tab" data-tab="contact">Contact</div>
-			<div class="tab" data-tab="resources">Resources</div>
+			<button class="tab active" data-tab="description">Description</button>
+			<button class="tab" data-tab="contact">Contact</button>
+			<button class="tab" data-tab="resources">Resources</button>
 		</div>
 		<div class="terminal-content">
 			<div class="output active" id="welcome">Welcome to my page!</div>
@@ -190,22 +231,26 @@
 				<div class="output" data-tab="contact">
 					<div class="input-container">
 						<span>&nbsp;&nbsp;-email_address: </span>
-						<span><input style="width:36rem" type="text" name="sender_address"></span>
+						<span><input style="width:50vw" type="email" name="sender_address" value=""
+								autocomplete="email"></span>
 					</div>
 				</div>
 				<div class="output" data-tab="contact">
 					<div class="input-container">
 						<span>&nbsp;&nbsp;-message: </span>
-						<span><textarea name="content"></textarea></span>
+						<span><textarea style="width:50vw;height:20vh;" name="content"></textarea></span>
 					</div>
 				</div>
 				<div class="command" data-tab="contact">
 					<div class="input-container">
-						<span>&nbsp;&nbsp;Send? (y/n): </span>
-						<span>
-							<button type="submit" name="send-cmd" value="y">y</button>
-							<button type="button" name="send-cmd" value="n">n</button>
-						</span>
+						<span>&nbsp;&nbsp;Send?&nbsp;</span>
+						<div>
+							<span>(</span>
+							<button class="command cta" type="submit" name="send-cmd" value="y">y</button>
+							<span>/</span>
+							<button class="command cta" type="button" name="send-cmd" value="n">n</button>
+							<span>)</span>
+						</div>
 					</div>
 				</div>
 				<div class="output" id="message-container" data-tab="contact"></div>
@@ -255,6 +300,13 @@
 		}
 	});
 
+	// check if device width is less than or equal to 768px (mobile size)
+	if (window.matchMedia("(max-width: 1179px)").matches) {
+		// execute code for mobile devices (maximize terminal)
+		terminal.classList.add("terminal-maximized");
+		content.style.height = "calc(100% - 60px)";
+	}
+
 	tabs.forEach(tab => {
 		tab.addEventListener('click', () => {
 			const tabName = tab.getAttribute('data-tab');
@@ -292,13 +344,8 @@
 			} else {
 				const errorMsg = document.createElement('div');
 				errorMsg.classList.add('msg-send-error');
-				if (xhr.status === 429) {
-					errorMsg.textContent = `$ ERROR sending message: too many requests.`;
-				} else if (xhr.status === 400) {
-					errorMsg.textContent = `$ ERROR sending message: missing required field(s).`;
-				} else {
-					errorMsg.textContent = `$ ERROR sending message at ${new Date().toISOString()}.`;
-				}
+				const response = JSON.parse(xhr.responseText); // parse the response text as JSON
+				errorMsg.textContent = `$ ERROR sending message: ${response.error}`; // display the error message from the server
 
 				messageContainer.appendChild(errorMsg);
 			}

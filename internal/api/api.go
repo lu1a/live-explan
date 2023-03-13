@@ -38,7 +38,11 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 		content := request.FormValue("content")
 
 		if sender_address == "" || content == "" {
-			http.Error(writer, "Required field(s) missing", http.StatusBadRequest)
+			http.Error(writer, "{\"error\":\"Required field(s) missing.\"}", http.StatusBadRequest)
+			return
+		}
+		if !util.IsValidEmail(sender_address) {
+			http.Error(writer, "{\"error\":\"Email address is not valid.\"}", http.StatusBadRequest)
 			return
 		}
 		if subject == "" {
@@ -46,13 +50,13 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 		}
 
 		if !limiter.Allow() {
-			http.Error(writer, "Too many requests, please wait ~10 more minutes.", http.StatusTooManyRequests)
+			http.Error(writer, "{\"error\":\"Too many requests; please wait ~10 more minutes.\"}", http.StatusTooManyRequests)
 			return
 		}
 
 		err := util.SendTelegramMessage(log, sender_address, subject, content)
 		if err != nil {
-			http.Error(writer, "Something went wrong with my contacting service!", http.StatusInternalServerError)
+			http.Error(writer, "{\"error\":\"Something went wrong with my contacting service!\"}", http.StatusInternalServerError)
 		}
 	})
 
