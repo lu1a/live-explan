@@ -143,10 +143,6 @@
 			margin-bottom: 5px;
 		}
 
-		/* .input-container>span {
-			flex-grow: 1;
-		} */
-
 		.input-container textarea,
 		.input-container input[type="email"] {
 			margin-left: 10px;
@@ -156,6 +152,32 @@
 			font-family: "Fira Code", monospace;
 			font-size: 1rem;
 			color: white;
+		}
+
+		.grow-wrap {
+			/* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
+			display: grid;
+			width: 50vw;
+		}
+
+		.grow-wrap::after {
+			/* Note the weird space! Needed to preventy jumpy behavior */
+			content: attr(data-replicated-value) " ";
+			white-space: pre-wrap;
+			visibility: hidden;
+		}
+
+		.grow-wrap>textarea {
+			resize: none;
+			overflow: hidden;
+		}
+
+		.grow-wrap>textarea,
+		.grow-wrap::after {
+			/* Identical styling required!! */
+			padding: 0.5rem;
+			font: inherit;
+			grid-area: 1 / 1 / 2 / 2;
 		}
 
 		ul {
@@ -238,7 +260,10 @@
 				<div class="output" data-tab="contact">
 					<div class="input-container">
 						<span>&nbsp;&nbsp;-message: </span>
-						<span><textarea style="width:50vw;height:20vh;" name="content"></textarea></span>
+						<div class="grow-wrap">
+							<textarea name="content" id="text" style="width: 50vw;"
+								onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
+						</div>
 					</div>
 				</div>
 				<div class="command" data-tab="contact">
