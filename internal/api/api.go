@@ -24,6 +24,14 @@ func Create(stop chan os.Signal, log *logrus.Logger) *http.Server {
 		}
 	})
 
+	router.Get("/favicon.ico", func(writer http.ResponseWriter, request *http.Request) {
+		filePath, err := filepath.Abs("./assets/favicon.ico")
+		if err != nil {
+			log.Fatal(err)
+		}
+		http.ServeFile(writer, request, filePath)
+	})
+
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		filePath, err := filepath.Abs("./internal/api/pages/faux-terminal.html")
 		if err != nil {
