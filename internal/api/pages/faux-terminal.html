@@ -201,11 +201,12 @@
 		}
 
 		.faux-cursor {
-			position: absolute;
 			width: 0.5em;
 			height: 1em;
 			background-color: white;
 			animation: cursor 1s infinite;
+			margin-left: 0.2rem;
+			margin-top: 0.2rem;
 		}
 
 		@keyframes cursor {
@@ -216,16 +217,6 @@
 			to {
 				opacity: 1;
 			}
-		}
-
-		#sender_address-faux_cursor {
-			top: 4.25rem;
-			left: 11rem;
-		}
-
-		#content-faux_cursor {
-			top: 5.8rem;
-			left: 7.4rem;
 		}
 
 		#sender_address:focus+#sender_address-faux_cursor {
@@ -319,19 +310,19 @@
 					<div class="output">
 						<div class="input-container">
 							<span>&nbsp;&nbsp;-email_address: </span>
+							<div class="faux-cursor" id="sender_address-faux_cursor"></div>
 							<span><input style="width:50vw" type="email" name="sender_address" id="sender_address"
 									value="" autocomplete="email">
-								<div class="faux-cursor" id="sender_address-faux_cursor"></div>
 							</span>
 						</div>
 					</div>
 					<div class="output">
 						<div class="input-container">
 							<span>&nbsp;&nbsp;-message: </span>
+							<div class="faux-cursor" id="content-faux_cursor"></div>
 							<div class="grow-wrap">
 								<textarea name="content" id="content" style="width: 50vw;"
 									onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
-								<div class="faux-cursor" id="content-faux_cursor"></div>
 							</div>
 						</div>
 					</div>
