@@ -5,7 +5,7 @@
 	<title>Lewis Torrington</title>
 	<style>
 		html {
-			font-size: 100%;
+			font-size: 16px;
 			-ms-touch-action: manipulation;
 			touch-action: manipulation;
 		}
@@ -13,9 +13,14 @@
 		body {
 			margin: 0;
 			padding: 0;
-			background: linear-gradient(to top, #040308, #AD4A28, #DD723C, #FC7001, #DCB697, #9BA5AE, #3E5879, #020B1A);
+			background: azure;
 			font-family: "Fira Code", monospace;
-			font-size: 1rem;
+		}
+
+		@media (prefers-color-scheme: dark) {
+			body {
+				background-color: darkslategray;
+			}
 		}
 
 		.terminal {
@@ -24,15 +29,14 @@
 			top: 50%;
 			left: 50%;
 			transform: translate(-50%, -50%);
-			border: 1px solid #333333;
-			border-radius: 5px;
+			border-radius: 15px;
 			overflow: hidden;
 			width: 80%;
 			height: 80%;
 			display: flex;
 			flex-direction: column;
-
 			transition: height 0.2s ease, width 0.2s ease;
+			box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3), 0px 0px 20px rgba(0, 0, 0, 0.2);
 		}
 
 		.top-bar {
@@ -50,6 +54,9 @@
 			font-size: 1rem;
 			margin-left: 10px;
 			flex-grow: 1;
+			font-weight: bold;
+			font-family: Arial;
+			text-align: center;
 		}
 
 		.button {
@@ -78,7 +85,6 @@
 			display: flex;
 			flex-direction: row;
 			background-color: #444444;
-			height: 1.9rem;
 			align-items: center;
 			padding-top: 0.4rem;
 			user-select: none;
@@ -89,24 +95,32 @@
 			font-size: 0.9rem;
 			user-select: none;
 			cursor: pointer;
-			background-color: #444444;
+			background-color: #262626;
 			border: none;
-			padding: 0.4rem 1rem;
-
-			transition: background-color 0.1s, color 0.1s;
+			padding: 0.4rem;
+			flex: 1;
+			text-align: center;
 		}
 
 		.tab.active {
-			background-color: #6e6e6e;
+			background-color: #444444;
+			color: white;
+			/* set the color for the active tab */
+		}
+
+		.tab.active:hover {
+			background-color: #444444;
+			color: white;
+			/* set the color for the active tab */
 		}
 
 		.tab:hover {
-			background-color: white;
-			color: black;
+			background-color: #202020;
+			/* set the hover color for the inactive tabs */
 		}
 
 		.tab:active {
-			background-color: grey;
+			background-color: #444444;
 			color: white;
 		}
 
@@ -114,8 +128,8 @@
 			position: absolute;
 			top: 70px;
 			left: 0;
-			width: 100%;
-			height: calc(100% - 30px);
+			width: calc(100% - 20px);
+			height: calc(100% - 90px);
 			overflow-y: scroll;
 			padding: 10px;
 		}
@@ -123,6 +137,7 @@
 		.terminal-maximized {
 			width: 100%;
 			height: 100%;
+			border-radius: 0px;
 		}
 
 		.command {
@@ -210,89 +225,119 @@
 			<div class="button red terminal-red"></div>
 			<div class="button grey terminal-grey"></div>
 			<div class="button green terminal-green"></div>
-			<div class="title"></div>
+			<div class="title">📁&nbsp;&nbsp;Lewis Torrington - server ./portfolio</div>
 		</div>
 		<div class="tab-bar">
-			<button class="tab active" data-tab="description">Description</button>
-			<button class="tab" data-tab="contact">Contact</button>
-			<button class="tab" data-tab="resources">Resources</button>
+			<button class="tab active" data-tab="description">~/portfolio - Description</button>
+			<button class="tab" data-tab="contact">~/portfolio - Contact</button>
+			<button class="tab" data-tab="resources">~/portfolio - Resources</button>
 		</div>
 		<div class="terminal-content">
-			<div class="output active" id="welcome">Welcome to my page!</div>
-			<div class="output active" data-tab="description">$ echo "Hello, World!"</div>
-			<div class="output active" data-tab="description">Hello, World!</div>
-			<div class="output active" data-tab="description">$ ls</div>
-			<div class="output active" data-tab="description">file1.txt file2.txt</div>
-			<div class="command active" data-tab="description">$ cat file1.txt</div>
-			<br class="active" data-tab="description" />
-			<div class="output active" data-tab="description">
-				Hello, my name is Lewis Torrington and this is my page.
-				About me:
-				<ul style="margin: 0;padding-inline-start: 20px;">
-					<li>From Australia; living in Finland since 2019.</li>
-					<li>Working at <a style="color: white;" href="https://www.upcloud.com/" target="_blank">UpCloud</a>
-					</li>
-					<li>Fullstack developer:</li>
-					<ul>
-						<li>Backend: Go, Python, C++ (learning Rust)</li>
-						<li>Frontend: React, Vue, WASM, etc</li>
+			<div class="active" data-tab="description">
+				<div class="output first-msg">Welcome to my page!</div>
+				<div class="output">$ echo "Hello, World!"</div>
+				<div class="output">Hello, World!</div>
+				<div class="output">$ ls</div>
+				<div class="output">file1.txt file2.txt</div>
+				<div class="command">$ cat file1.txt</div>
+				<br />
+				<div class="output">
+					Hello, my name is Lewis Torrington and this is my page.
+					About me:
+					<ul style="margin: 0;padding-inline-start: 20px;">
+						<li>From Australia; living in Finland since 2019.</li>
+						<li>Working at <a style="color: white;" href="https://www.upcloud.com/"
+								target="_blank">UpCloud</a>
+						</li>
+						<li>Fullstack developer:</li>
+						<ul>
+							<li>Backend: Go, Python, C++ (learning Rust)</li>
+							<li>Frontend: React, Vue, WASM, etc</li>
+						</ul>
 					</ul>
-				</ul>
+				</div>
+				<br />
+				<div class="output">GitHub: <a style="color: white;" href="https://github.com/lu1a"
+						target="_blank">https://github.com/lu1a</a></div>
+				<div class="output">LinkedIn: <a style="color: white;"
+						href="https://www.linkedin.com/in/lewis-torrington/"
+						target="_blank">https://www.linkedin.com/in/lewis-torrington/</a></div>
+				<div class="output">Instead of a resume, just go look at my LinkedIn. :P
+				</div>
+				<br />
+				<div class="output">Ping me if you want me to contribute to your git project!</div>
+				<br />
+				<br />
+				<br />
+				<div class="output">Note: This site was written in Go + HTML by me. You can find the source code on my
+					GitHub.
+					As you'll be able to see there, I have no code for cookies or other nasties.</div>
 			</div>
-			<br class="active" data-tab="description" />
-			<div class="command active" data-tab="description"><a style="color: white;" href="https://github.com/lu1a"
-					target="_blank">https://github.com/lu1a</a></div>
-			<div class="command active" data-tab="description"><a style="color: white;"
-					href="https://www.linkedin.com/in/lewis-torrington/"
-					target="_blank">https://www.linkedin.com/in/lewis-torrington/</a></div>
 
-
-			<form id="contact-form" enctype="multipart/form-data">
-				<div class="output" data-tab="contact">$ send_msg_to_lewis</div>
-				<div class="output" data-tab="contact">&nbsp;&nbsp;-subject: Contact request</div>
-				<div class="output" data-tab="contact">
-					<div class="input-container">
-						<span>&nbsp;&nbsp;-email_address: </span>
-						<span><input style="width:50vw" type="email" name="sender_address" value=""
-								autocomplete="email"></span>
-					</div>
-				</div>
-				<div class="output" data-tab="contact">
-					<div class="input-container">
-						<span>&nbsp;&nbsp;-message: </span>
-						<div class="grow-wrap">
-							<textarea name="content" id="text" style="width: 50vw;"
-								onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
+			<div data-tab="contact">
+				<div class="output first-msg">Contact me</div>
+				<form id="contact-form" enctype="multipart/form-data">
+					<div class="output">$ send_msg_to_lewis</div>
+					<div class="output">&nbsp;&nbsp;-subject: Contact request</div>
+					<div class="output">
+						<div class="input-container">
+							<span>&nbsp;&nbsp;-email_address: </span>
+							<span><input style="width:50vw" type="email" name="sender_address" value=""
+									autocomplete="email"></span>
 						</div>
 					</div>
-				</div>
-				<div class="command" data-tab="contact">
-					<div class="input-container">
-						<span>&nbsp;&nbsp;Send?&nbsp;</span>
-						<div>
-							<span>(</span>
-							<button class="command cta" type="submit" name="send-cmd" value="y">y</button>
-							<span>/</span>
-							<button class="command cta" type="button" name="send-cmd" value="n">n</button>
-							<span>)</span>
+					<div class="output">
+						<div class="input-container">
+							<span>&nbsp;&nbsp;-message: </span>
+							<div class="grow-wrap">
+								<textarea name="content" id="text" style="width: 50vw;"
+									onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="output" id="message-container" data-tab="contact"></div>
-			</form>
+					<div class="command">
+						<div class="input-container">
+							<span>&nbsp;&nbsp;Send?&nbsp;</span>
+							<div>
+								<span>(</span>
+								<button class="command cta" type="submit" name="send-cmd" value="y">y</button>
+								<span>/</span>
+								<button class="command cta" type="button" name="send-cmd" value="n">n</button>
+								<span>)</span>
+							</div>
+						</div>
+					</div>
+					<div class="output" id="message-container"></div>
+				</form>
+			</div>
 
-			<div class="output" data-tab="resources">Resource links and information go here.</div>
+			<div data-tab="resources">
+				<div class="output first-msg">Some handy resources for myself and others</div>
+				<div class="output">
+					<pre>
+      ______ ______
+    _/      Y      \_
+   // ~~ ~~ | ~~ ~  \\
+  // ~ ~ ~~ | ~~~ ~~ \\
+ //________.|.________\\
+`----------`-'----------'
+					</pre>
+				</div>
+				<div class="output">// TODO: Links and information go here. For now just ask me.
+				</div>
+			</div>
 		</div>
 	</div>
 </body>
 <script>
-	// Set the title in the top bar
-	document.querySelector(".title").textContent = document.title;
-
 	// display date and time in desired format
-	const welcomestr = document.getElementById("welcome");
+	const firstMsgs = document.querySelectorAll('.first-msg');
 	const now = new Date().toISOString();
-	welcomestr.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " Welcome to my page!";
+
+	firstMsgs.forEach(firstMsg => {
+		firstMsg.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " " + firstMsg.innerHTML;
+	});
+
 
 	// get elements
 	const terminal = document.querySelector(".terminal");
@@ -325,8 +370,8 @@
 		}
 	});
 
-	// check if device width is less than or equal to 768px (mobile size)
-	if (window.matchMedia("(max-width: 1179px)").matches) {
+	// Make terminal maximised by default on mobile
+	if (window.matchMedia("(max-width: 768px)").matches) {
 		// execute code for mobile devices (maximize terminal)
 		terminal.classList.add("terminal-maximized");
 		content.style.height = "calc(100% - 60px)";
@@ -337,12 +382,16 @@
 			const tabName = tab.getAttribute('data-tab');
 			const contentElements = document.querySelectorAll(`.terminal-content [data-tab]`);
 			tabs.forEach(t => t.classList.remove('active'));
-			contentElements.forEach(content => content.style.display = 'none');
+			// contentElements.forEach(content => content.style.display = 'none');
 			tab.classList.add('active');
 			contentElements.forEach(content => {
-				if (content.getAttribute('data-tab') === tabName) {
-					content.style.display = 'block';
-				}
+				contentElements.forEach(content => {
+					if (content.getAttribute('data-tab') === tabName) {
+						content.classList.add('active');
+					} else {
+						content.classList.remove('active');
+					}
+				});
 			});
 		});
 	});
