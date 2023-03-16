@@ -199,6 +199,42 @@
 			list-style-type: '- ';
 		}
 
+		.faux-cursor {
+			position: absolute;
+			width: 0.5em;
+			height: 1em;
+			background-color: white;
+			animation: cursor 1s infinite;
+		}
+
+		@keyframes cursor {
+			from {
+				opacity: 0;
+			}
+
+			to {
+				opacity: 1;
+			}
+		}
+
+		#sender_address-faux_cursor {
+			top: 4.25rem;
+			left: 11rem;
+		}
+
+		#content-faux_cursor {
+			top: 5.8rem;
+			left: 7.4rem;
+		}
+
+		#sender_address:focus+#sender_address-faux_cursor {
+			display: none;
+		}
+
+		#content:focus+#content-faux_cursor {
+			display: none;
+		}
+
 		.cta {
 			background-color: transparent;
 			font-family: "Fira Code", monospace;
@@ -257,7 +293,7 @@
 					</ul>
 				</div>
 				<br />
-				<div class="output">GitHub: <a style="color: white;" href="https://github.com/lu1a"
+				<div class="output"><b>GitHub:</b> <a style="color: white;" href="https://github.com/lu1a"
 						target="_blank">https://github.com/lu1a</a></div>
 				<div class="output">LinkedIn: <a style="color: white;"
 						href="https://www.linkedin.com/in/lewis-torrington/"
@@ -282,16 +318,19 @@
 					<div class="output">
 						<div class="input-container">
 							<span>&nbsp;&nbsp;-email_address: </span>
-							<span><input style="width:50vw" type="email" name="sender_address" value=""
-									autocomplete="email"></span>
+							<span><input style="width:50vw" type="email" name="sender_address" id="sender_address"
+									value="" autocomplete="email">
+								<div class="faux-cursor" id="sender_address-faux_cursor"></div>
+							</span>
 						</div>
 					</div>
 					<div class="output">
 						<div class="input-container">
 							<span>&nbsp;&nbsp;-message: </span>
 							<div class="grow-wrap">
-								<textarea name="content" id="text" style="width: 50vw;"
+								<textarea name="content" id="content" style="width: 50vw;"
 									onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
+								<div class="faux-cursor" id="content-faux_cursor"></div>
 							</div>
 						</div>
 					</div>
@@ -394,6 +433,43 @@
 				});
 			});
 		});
+	});
+
+	// Making the faux-cursors work on inputs
+
+	const senderAddressInput = document.getElementById("sender_address");
+	const senderAddressfauxCursor = document.getElementById("sender_address-faux_cursor");
+	senderAddressInput.addEventListener("input", () => {
+		if (senderAddressInput.value) {
+			senderAddressfauxCursor.style.display = "none";
+		} else {
+			senderAddressfauxCursor.style.display = "block";
+		}
+	});
+	senderAddressInput.addEventListener("focus", () => {
+		senderAddressfauxCursor.style.display = "none";
+	});
+	senderAddressInput.addEventListener("blur", () => {
+		if (!senderAddressInput.value) {
+			senderAddressfauxCursor.style.display = "block";
+		}
+	});
+	const contentInput = document.getElementById("content");
+	const contentfauxCursor = document.getElementById("content-faux_cursor");
+	contentInput.addEventListener("input", () => {
+		if (contentInput.value) {
+			contentfauxCursor.style.display = "none";
+		} else {
+			contentfauxCursor.style.display = "block";
+		}
+	});
+	contentInput.addEventListener("focus", () => {
+		contentfauxCursor.style.display = "none";
+	});
+	contentInput.addEventListener("blur", () => {
+		if (!contentInput.value) {
+			contentfauxCursor.style.display = "block";
+		}
 	});
 
 	// Contact request below, trying to use as little BS as possible.
