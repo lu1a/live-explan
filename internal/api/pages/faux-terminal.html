@@ -1,525 +1,610 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Lewis Torrington</title>
+    <link rel="icon" href="/favicon.ico?v=1" type="image/x-icon" />
+    <style>
+      html {
+        font-size: 16px;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+      }
 
-<head>
-	<title>Lewis Torrington</title>
-	<link rel="icon" href="/favicon.ico?v=1" type="image/x-icon">
-	<style>
-		html {
-			font-size: 16px;
-			-ms-touch-action: manipulation;
-			touch-action: manipulation;
-		}
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Fira Code", monospace;
 
-		body {
-			margin: 0;
-			padding: 0;
-			font-family: "Fira Code", monospace;
+        background: linear-gradient(-45deg, #556b2f, #8fbc8f, #bc8f8f, #8b4513);
+        background: linear-gradient(
+          -45deg,
+          color(display-p3 0.34 0.44 0.18),
+          color(display-p3 0.56 0.78 0.56),
+          color(display-p3 0.78 0.71 0.71),
+          color(display-p3 0.43 0.23 0.08)
+        );
 
-			background: linear-gradient(-45deg, #556B2F, #8FBC8F, #BC8F8F, #8B4513);
-			background: linear-gradient(-45deg, color(display-p3 0.34 0.44 0.18), color(display-p3 0.56 0.78 0.56), color(display-p3 0.78 0.71 0.71), color(display-p3 0.43 0.23 0.08));
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+        height: 100vh;
+      }
 
-			background-size: 400% 400%;
-			animation: gradient 15s ease infinite;
-			height: 100vh;
-		}
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
 
-		@keyframes gradient {
-			0% {
-				background-position: 0% 50%;
-			}
+        50% {
+          background-position: 100% 50%;
+        }
 
-			50% {
-				background-position: 100% 50%;
-			}
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-			100% {
-				background-position: 0% 50%;
-			}
-		}
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: darkslategray;
+        }
+      }
 
-		@media (prefers-color-scheme: dark) {
-			body {
-				background-color: darkslategray;
-			}
-		}
+      .terminal {
+        background-color: #272727;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 15px;
+        overflow: hidden;
+        width: 80%;
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        transition: height 0.2s ease, width 0.2s ease;
+        box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3),
+          0px 0px 20px rgba(0, 0, 0, 0.2);
+      }
 
-		.terminal {
-			background-color: #272727;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			border-radius: 15px;
-			overflow: hidden;
-			width: 80%;
-			height: 80%;
-			display: flex;
-			flex-direction: column;
-			transition: height 0.2s ease, width 0.2s ease;
-			box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.3), 0px 0px 20px rgba(0, 0, 0, 0.2);
-		}
+      .top-bar {
+        display: flex;
+        flex-direction: row;
+        background-color: #444444;
+        height: 2rem;
+        align-items: center;
+        padding: 0 10px;
+        user-select: none;
+      }
 
-		.top-bar {
-			display: flex;
-			flex-direction: row;
-			background-color: #444444;
-			height: 2rem;
-			align-items: center;
-			padding: 0 10px;
-			user-select: none;
-		}
+      .title {
+        color: white;
+        font-size: 1rem;
+        margin-left: 10px;
+        flex-grow: 1;
+        font-weight: bold;
+        font-family: Arial;
+        text-align: center;
+      }
 
-		.title {
-			color: white;
-			font-size: 1rem;
-			margin-left: 10px;
-			flex-grow: 1;
-			font-weight: bold;
-			font-family: Arial;
-			text-align: center;
-		}
+      .button {
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+        margin-right: 7px;
+        user-select: none;
+      }
 
-		.button {
-			width: 0.7rem;
-			height: 0.7rem;
-			border-radius: 50%;
-			margin-right: 7px;
-			user-select: none;
-		}
+      .red {
+        background-color: #ff605c;
+        background-color: color(display-p3 1 0.4 0.36);
+      }
 
-		.red {
-			background-color: #FF605C;
-			background-color: color(display-p3 1 0.4 0.36);
-		}
+      .grey {
+        background-color: #c6c6c6;
+      }
 
-		.grey {
-			background-color: #c6c6c6;
-		}
+      .green {
+        background-color: #00ca4e;
+        background-color: color(display-p3 0 0.79 0.31);
+      }
 
-		.green {
-			background-color: #00CA4E;
-			background-color: color(display-p3 0 0.79 0.31);
-		}
+      .tab-bar {
+        display: flex;
+        flex-direction: row;
+        background-color: #444444;
+        align-items: center;
+        padding-top: 0.4rem;
+        user-select: none;
+      }
 
-		.tab-bar {
-			display: flex;
-			flex-direction: row;
-			background-color: #444444;
-			align-items: center;
-			padding-top: 0.4rem;
-			user-select: none;
-		}
+      .tab {
+        color: white;
+        font-size: 0.9rem;
+        user-select: none;
+        cursor: pointer;
+        background-color: #262626;
+        border: none;
+        padding: 0.4rem;
+        flex: 1;
+        text-align: center;
+      }
 
-		.tab {
-			color: white;
-			font-size: 0.9rem;
-			user-select: none;
-			cursor: pointer;
-			background-color: #262626;
-			border: none;
-			padding: 0.4rem;
-			flex: 1;
-			text-align: center;
-		}
+      .tab.active {
+        background-color: #444444;
+        color: white;
+        /* set the color for the active tab */
+      }
 
-		.tab.active {
-			background-color: #444444;
-			color: white;
-			/* set the color for the active tab */
-		}
+      .tab.active:hover {
+        background-color: #444444;
+        color: white;
+        /* set the color for the active tab */
+      }
 
-		.tab.active:hover {
-			background-color: #444444;
-			color: white;
-			/* set the color for the active tab */
-		}
+      .tab:hover {
+        background-color: #202020;
+        /* set the hover color for the inactive tabs */
+      }
 
-		.tab:hover {
-			background-color: #202020;
-			/* set the hover color for the inactive tabs */
-		}
+      .tab:active {
+        background-color: #444444;
+        color: white;
+      }
 
-		.tab:active {
-			background-color: #444444;
-			color: white;
-		}
+      .terminal-content {
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: calc(100% - 20px);
+        height: calc(100% - 90px);
+        overflow-y: scroll;
+        padding: 10px;
+      }
 
-		.terminal-content {
-			position: absolute;
-			top: 70px;
-			left: 0;
-			width: calc(100% - 20px);
-			height: calc(100% - 90px);
-			overflow-y: scroll;
-			padding: 10px;
-		}
+      .terminal-maximized {
+        width: 100%;
+        height: 100%;
+        border-radius: 0px;
+      }
 
-		.terminal-maximized {
-			width: 100%;
-			height: 100%;
-			border-radius: 0px;
-		}
+      .command {
+        color: #00ff00;
+        color: color(display-p3 0 1 0);
+      }
 
-		.command {
-			color: #00ff00;
-			color: color(display-p3 0 1 0);
-		}
+      .output {
+        color: white;
+      }
 
-		.output {
-			color: white;
-		}
+      .terminal-content [data-tab]:not(.active) {
+        display: none;
+      }
 
-		.terminal-content [data-tab]:not(.active) {
-			display: none;
-		}
+      .input-container {
+        display: flex;
+        margin-bottom: 5px;
+      }
 
-		.input-container {
-			display: flex;
-			margin-bottom: 5px;
-		}
+      .input-container textarea,
+      .input-container input[type="email"] {
+        margin-left: 10px;
+        background-color: transparent;
+        border: none;
+        width: 100%;
+        font-family: "Fira Code", monospace;
+        font-size: 1rem;
+        color: white;
+      }
 
-		.input-container textarea,
-		.input-container input[type="email"] {
-			margin-left: 10px;
-			background-color: transparent;
-			border: none;
-			width: 100%;
-			font-family: "Fira Code", monospace;
-			font-size: 1rem;
-			color: white;
-		}
+      .grow-wrap {
+        /* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
+        display: grid;
+        width: 50vw;
+      }
 
-		.grow-wrap {
-			/* easy way to plop the elements on top of each other and have them both sized based on the tallest one's height */
-			display: grid;
-			width: 50vw;
-		}
+      .grow-wrap::after {
+        /* Note the weird space! Needed to prevent jumpy behavior */
+        content: attr(data-replicated-value) " ";
+        white-space: pre-wrap;
+        visibility: hidden;
+      }
 
-		.grow-wrap::after {
-			/* Note the weird space! Needed to preventy jumpy behavior */
-			content: attr(data-replicated-value) " ";
-			white-space: pre-wrap;
-			visibility: hidden;
-		}
+      .grow-wrap > textarea {
+        resize: none;
+        overflow: hidden;
+      }
 
-		.grow-wrap>textarea {
-			resize: none;
-			overflow: hidden;
-		}
+      .grow-wrap > textarea,
+      .grow-wrap::after {
+        /* Identical styling required!! */
+        padding: 0.5rem;
+        font: inherit;
+        grid-area: 1 / 1 / 2 / 2;
+      }
 
-		.grow-wrap>textarea,
-		.grow-wrap::after {
-			/* Identical styling required!! */
-			padding: 0.5rem;
-			font: inherit;
-			grid-area: 1 / 1 / 2 / 2;
-		}
+      ul {
+        list-style-type: "- ";
+      }
 
-		ul {
-			list-style-type: '- ';
-		}
+      .faux-cursor {
+        width: 0.5em;
+        height: 1em;
+        background-color: white;
+        animation: cursor 1s infinite;
+        margin-left: 0.2rem;
+        margin-top: 0.2rem;
+      }
 
-		.faux-cursor {
-			width: 0.5em;
-			height: 1em;
-			background-color: white;
-			animation: cursor 1s infinite;
-			margin-left: 0.2rem;
-			margin-top: 0.2rem;
-		}
+      @keyframes cursor {
+        from {
+          opacity: 0;
+        }
 
-		@keyframes cursor {
-			from {
-				opacity: 0;
-			}
+        to {
+          opacity: 1;
+        }
+      }
 
-			to {
-				opacity: 1;
-			}
-		}
+      #sender_address:focus + #sender_address-faux_cursor {
+        display: none;
+      }
 
-		#sender_address:focus+#sender_address-faux_cursor {
-			display: none;
-		}
+      #content:focus + #content-faux_cursor {
+        display: none;
+      }
 
-		#content:focus+#content-faux_cursor {
-			display: none;
-		}
+      .cta {
+        background-color: transparent;
+        font-family: "Fira Code", monospace;
+        font-size: 1rem;
+        border: 1px solid #00ff00;
+        transition: background-color 0.1s, color 0.1s;
+      }
 
-		.cta {
-			background-color: transparent;
-			font-family: "Fira Code", monospace;
-			font-size: 1rem;
-			border: 1px solid #00ff00;
-			transition: background-color 0.1s, color 0.1s;
-		}
+      .cta:hover {
+        background-color: white;
+        color: black;
+      }
 
-		.cta:hover {
-			background-color: white;
-			color: black;
-		}
+      .cta:active {
+        background-color: grey;
+        color: white;
+      }
+    </style>
+  </head>
 
-		.cta:active {
-			background-color: grey;
-			color: white;
-		}
-	</style>
-</head>
+  <body>
+    <div class="terminal">
+      <div class="top-bar">
+        <div class="button red terminal-red"></div>
+        <div class="button grey terminal-grey"></div>
+        <div class="button green terminal-green"></div>
+        <div class="title">
+          📁&nbsp;&nbsp;Lewis Torrington - server ./portfolio
+        </div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab active" data-tab="description">
+          ~/portfolio - Description
+        </button>
+        <button class="tab" data-tab="contact">~/portfolio - Contact</button>
+        <button class="tab" data-tab="resources">
+          ~/portfolio - Resources
+        </button>
+      </div>
+      <div class="terminal-content">
+        <div class="active" data-tab="description">
+          <div class="output first-msg">Welcome to my page!</div>
+          <div class="output">$ echo "Hello, World!"</div>
+          <div class="output">Hello, World!</div>
+          <div class="output">$ ls</div>
+          <div class="output">file1.txt file2.txt</div>
+          <div class="command">$ cat file1.txt</div>
+          <br />
+          <div class="output">
+            Hello, my name is Lewis Torrington and this is my page.
+            <br />
+            About me:
+            <ul style="margin: 0; padding-inline-start: 20px">
+              <li>From Australia; living in Finland since 2019.</li>
+              <li>
+                BCompSc (m.: Cyber Security),
+                <a
+                  style="color: white"
+                  href="https://www.uow.edu.au/"
+                  target="_blank"
+                  >UoW</a
+                >, 2016-2018.
+              </li>
+              <li>
+                Working at
+                <a
+                  style="color: white"
+                  href="https://www.upcloud.com/"
+                  target="_blank"
+                  >UpCloud</a
+                >.
+              </li>
+              <li>Software engineer:</li>
+              <ul>
+                <li>Most interested in: Rust</li>
+                <li>Backend specialties: Go, Python, C++</li>
+                <li>Frontend specialties: React, Vue, WASM, etc.</li>
+              </ul>
+            </ul>
+          </div>
+          <br />
+          <div class="output">
+            <b>GitHub:</b>
+            <a
+              style="color: white"
+              href="https://github.com/lu1a"
+              target="_blank"
+              >https://github.com/lu1a</a
+            >
+          </div>
+          <div class="output">
+            LinkedIn:
+            <a
+              style="color: white"
+              href="https://www.linkedin.com/in/lewis-torrington/"
+              target="_blank"
+              >https://www.linkedin.com/in/lewis-torrington</a
+            >
+          </div>
+          <div class="output">
+            Instead of a CV, just go look at my LinkedIn. :P
+          </div>
+          <br />
+          <div class="output">
+            Ping me if you want me to contribute to your git project!
+          </div>
+          <br />
+          <br />
+          <br />
+          <div class="output">
+            Note: This site was written in Go + HTML by me. You can find the
+            <a
+              style="color: white"
+              href="https://github.com/lu1a/live-explan"
+              target="_blank"
+              >source code</a
+            >
+            on my GitHub. As you'll be able to see there, I have no code for
+            cookies or other nasties.
+          </div>
+        </div>
 
-<body>
-	<div class="terminal">
-		<div class="top-bar">
-			<div class="button red terminal-red"></div>
-			<div class="button grey terminal-grey"></div>
-			<div class="button green terminal-green"></div>
-			<div class="title">📁&nbsp;&nbsp;Lewis Torrington - server ./portfolio</div>
-		</div>
-		<div class="tab-bar">
-			<button class="tab active" data-tab="description">~/portfolio - Description</button>
-			<button class="tab" data-tab="contact">~/portfolio - Contact</button>
-			<button class="tab" data-tab="resources">~/portfolio - Resources</button>
-		</div>
-		<div class="terminal-content">
-			<div class="active" data-tab="description">
-				<div class="output first-msg">Welcome to my page!</div>
-				<div class="output">$ echo "Hello, World!"</div>
-				<div class="output">Hello, World!</div>
-				<div class="output">$ ls</div>
-				<div class="output">file1.txt file2.txt</div>
-				<div class="command">$ cat file1.txt</div>
-				<br />
-				<div class="output">
-					Hello, my name is Lewis Torrington and this is my page.
-					<br />
-					About me:
-					<ul style="margin: 0;padding-inline-start: 20px;">
-						<li>From Australia; living in Finland since 2019.</li>
-						<li>BCompSc (m.: Cyber Security), <a style="color: white;" href="https://www.uow.edu.au/"
-								target="_blank">UoW</a>, 2016-2018.</li>
-						<li>Working at <a style="color: white;" href="https://www.upcloud.com/"
-								target="_blank">UpCloud</a>.
-						</li>
-						<li>Software engineer:</li>
-						<ul>
-							<li>Most interested in: Rust</li>
-							<li>Backend specialties: Go, Python, C++</li>
-							<li>Frontend specialties: React, Vue, WASM, etc.</li>
-						</ul>
-					</ul>
-				</div>
-				<br />
-				<div class="output"><b>GitHub:</b> <a style="color: white;" href="https://github.com/lu1a"
-						target="_blank">https://github.com/lu1a</a></div>
-				<div class="output">LinkedIn: <a style="color: white;"
-						href="https://www.linkedin.com/in/lewis-torrington/"
-						target="_blank">https://www.linkedin.com/in/lewis-torrington</a></div>
-				<div class="output">Instead of a CV, just go look at my LinkedIn. :P
-				</div>
-				<br />
-				<div class="output">Ping me if you want me to contribute to your git project!</div>
-				<br />
-				<br />
-				<br />
-				<div class="output">Note: This site was written in Go + HTML by me. You can find the <a
-						style="color: white;" href="https://github.com/lu1a/live-explan" target="_blank">source code</a>
-					on my
-					GitHub.
-					As you'll be able to see there, I have no code for cookies or other nasties.</div>
-			</div>
+        <div data-tab="contact">
+          <div class="output first-msg">Contact me</div>
+          <form id="contact-form" enctype="multipart/form-data">
+            <div class="output">$ send_msg_to_lewis</div>
+            <div class="output">&nbsp;&nbsp;-subject: Contact request</div>
+            <div class="output">
+              <div class="input-container">
+                <span>&nbsp;&nbsp;-email_address: </span>
+                <div class="faux-cursor" id="sender_address-faux_cursor"></div>
+                <span
+                  ><input
+                    style="width: 50vw"
+                    type="email"
+                    name="sender_address"
+                    id="sender_address"
+                    value=""
+                    autocomplete="email"
+                  />
+                </span>
+              </div>
+            </div>
+            <div class="output">
+              <div class="input-container">
+                <span>&nbsp;&nbsp;-message: </span>
+                <div class="faux-cursor" id="content-faux_cursor"></div>
+                <div class="grow-wrap">
+                  <textarea
+                    name="content"
+                    id="content"
+                    style="width: 50vw"
+                    onInput="this.parentNode.dataset.replicatedValue = this.value"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="command">
+              <div class="input-container">
+                <span>&nbsp;&nbsp;Send?&nbsp;</span>
+                <div>
+                  <span>(</span>
+                  <button
+                    class="command cta"
+                    type="submit"
+                    name="send-cmd"
+                    value="y"
+                  >
+                    y
+                  </button>
+                  <span>/</span>
+                  <button
+                    class="command cta"
+                    type="button"
+                    name="send-cmd"
+                    value="n"
+                  >
+                    n
+                  </button>
+                  <span>)</span>
+                </div>
+              </div>
+            </div>
+            <div class="output" id="message-container"></div>
+          </form>
+        </div>
 
-			<div data-tab="contact">
-				<div class="output first-msg">Contact me</div>
-				<form id="contact-form" enctype="multipart/form-data">
-					<div class="output">$ send_msg_to_lewis</div>
-					<div class="output">&nbsp;&nbsp;-subject: Contact request</div>
-					<div class="output">
-						<div class="input-container">
-							<span>&nbsp;&nbsp;-email_address: </span>
-							<div class="faux-cursor" id="sender_address-faux_cursor"></div>
-							<span><input style="width:50vw" type="email" name="sender_address" id="sender_address"
-									value="" autocomplete="email">
-							</span>
-						</div>
-					</div>
-					<div class="output">
-						<div class="input-container">
-							<span>&nbsp;&nbsp;-message: </span>
-							<div class="faux-cursor" id="content-faux_cursor"></div>
-							<div class="grow-wrap">
-								<textarea name="content" id="content" style="width: 50vw;"
-									onInput="this.parentNode.dataset.replicatedValue = this.value"></textarea>
-							</div>
-						</div>
-					</div>
-					<div class="command">
-						<div class="input-container">
-							<span>&nbsp;&nbsp;Send?&nbsp;</span>
-							<div>
-								<span>(</span>
-								<button class="command cta" type="submit" name="send-cmd" value="y">y</button>
-								<span>/</span>
-								<button class="command cta" type="button" name="send-cmd" value="n">n</button>
-								<span>)</span>
-							</div>
-						</div>
-					</div>
-					<div class="output" id="message-container"></div>
-				</form>
-			</div>
-
-			<div data-tab="resources">
-				<div class="output first-msg">Some handy resources for myself and others</div>
-				<div class="output">
-					<pre>
+        <div data-tab="resources">
+          <div class="output first-msg">
+            Some handy resources for myself and others
+          </div>
+          <div class="output">
+            <pre>
       ______ ______
     _/      Y      \_
    // ~~ ~~ | ~~ ~  \\
   // ~ ~ ~~ | ~~~ ~~ \\
  //________.|.________\\
 `----------`-'----------'
-					</pre>
-				</div>
-				<div class="output">// TODO: Links and information go here. For now just ask me.
-				</div>
-			</div>
-		</div>
-	</div>
-</body>
-<script>
-	// display date and time in desired format
-	const firstMsgs = document.querySelectorAll('.first-msg');
-	const now = new Date().toISOString();
+					</pre
+            >
+          </div>
+          <div class="output">
+            <a
+              style="color: white"
+              href="https://grugbrain.dev/"
+              target="_blank"
+              >https://grugbrain.dev/</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    // display date and time in desired format
+    const firstMsgs = document.querySelectorAll(".first-msg");
+    const now = new Date().toISOString();
 
-	firstMsgs.forEach(firstMsg => {
-		firstMsg.innerHTML = now.slice(0, 10) + " " + now.slice(11, 19) + " " + firstMsg.innerHTML;
-	});
+    firstMsgs.forEach((firstMsg) => {
+      firstMsg.innerHTML =
+        now.slice(0, 10) + " " + now.slice(11, 19) + " " + firstMsg.innerHTML;
+    });
 
+    // get elements
+    const terminal = document.querySelector(".terminal");
+    const redButton = document.querySelector(".terminal-red");
+    const greyButton = document.querySelector(".terminal-grey");
+    const greenButton = document.querySelector(".terminal-green");
+    const tabs = document.querySelectorAll(".tab");
+    const content = document.querySelector(".terminal-content");
 
-	// get elements
-	const terminal = document.querySelector(".terminal");
-	const redButton = document.querySelector(".terminal-red");
-	const greyButton = document.querySelector(".terminal-grey");
-	const greenButton = document.querySelector(".terminal-green");
-	const tabs = document.querySelectorAll('.tab');
-	const content = document.querySelector(".terminal-content");
+    // handle red button click
+    redButton.addEventListener("click", function () {
+      alert("Close this tab in your browser as normal 🤷");
+    });
 
-	// handle red button click
-	redButton.addEventListener("click", function () {
-		alert("Close this tab in your browser as normal 🤷")
-	});
+    // handle grey button click
+    greyButton.addEventListener("click", function () {
+      // do nothing
+    });
 
-	// handle grey button click
-	greyButton.addEventListener("click", function () {
-		// do nothing
-	});
+    // handle green button click
+    greenButton.addEventListener("click", function () {
+      if (terminal.classList.contains("terminal-maximized")) {
+        // minimize
+        terminal.classList.remove("terminal-maximized");
+        content.style.height = "calc(100% - 30px)";
+      } else {
+        // maximize
+        terminal.classList.add("terminal-maximized");
+        content.style.height = "calc(100% - 60px)";
+      }
+    });
 
-	// handle green button click
-	greenButton.addEventListener("click", function () {
-		if (terminal.classList.contains("terminal-maximized")) {
-			// minimize
-			terminal.classList.remove("terminal-maximized");
-			content.style.height = "calc(100% - 30px)";
-		} else {
-			// maximize
-			terminal.classList.add("terminal-maximized");
-			content.style.height = "calc(100% - 60px)";
-		}
-	});
+    // Make terminal maximised by default on mobile
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      // execute code for mobile devices (maximize terminal)
+      terminal.classList.add("terminal-maximized");
+      content.style.height = "calc(100% - 60px)";
+    }
 
-	// Make terminal maximised by default on mobile
-	if (window.matchMedia("(max-width: 768px)").matches) {
-		// execute code for mobile devices (maximize terminal)
-		terminal.classList.add("terminal-maximized");
-		content.style.height = "calc(100% - 60px)";
-	}
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const tabName = tab.getAttribute("data-tab");
+        const contentElements = document.querySelectorAll(
+          `.terminal-content [data-tab]`
+        );
+        tabs.forEach((t) => t.classList.remove("active"));
+        // contentElements.forEach(content => content.style.display = 'none');
+        tab.classList.add("active");
+        contentElements.forEach((content) => {
+          contentElements.forEach((content) => {
+            if (content.getAttribute("data-tab") === tabName) {
+              content.classList.add("active");
+            } else {
+              content.classList.remove("active");
+            }
+          });
+        });
+      });
+    });
 
-	tabs.forEach(tab => {
-		tab.addEventListener('click', () => {
-			const tabName = tab.getAttribute('data-tab');
-			const contentElements = document.querySelectorAll(`.terminal-content [data-tab]`);
-			tabs.forEach(t => t.classList.remove('active'));
-			// contentElements.forEach(content => content.style.display = 'none');
-			tab.classList.add('active');
-			contentElements.forEach(content => {
-				contentElements.forEach(content => {
-					if (content.getAttribute('data-tab') === tabName) {
-						content.classList.add('active');
-					} else {
-						content.classList.remove('active');
-					}
-				});
-			});
-		});
-	});
+    // Making the faux-cursors work on inputs
 
-	// Making the faux-cursors work on inputs
+    const senderAddressInput = document.getElementById("sender_address");
+    const senderAddressfauxCursor = document.getElementById(
+      "sender_address-faux_cursor"
+    );
+    senderAddressInput.addEventListener("input", () => {
+      if (senderAddressInput.value) {
+        senderAddressfauxCursor.style.display = "none";
+      } else {
+        senderAddressfauxCursor.style.display = "block";
+      }
+    });
+    senderAddressInput.addEventListener("focus", () => {
+      senderAddressfauxCursor.style.display = "none";
+    });
+    senderAddressInput.addEventListener("blur", () => {
+      if (!senderAddressInput.value) {
+        senderAddressfauxCursor.style.display = "block";
+      }
+    });
+    const contentInput = document.getElementById("content");
+    const contentfauxCursor = document.getElementById("content-faux_cursor");
+    contentInput.addEventListener("input", () => {
+      if (contentInput.value) {
+        contentfauxCursor.style.display = "none";
+      } else {
+        contentfauxCursor.style.display = "block";
+      }
+    });
+    contentInput.addEventListener("focus", () => {
+      contentfauxCursor.style.display = "none";
+    });
+    contentInput.addEventListener("blur", () => {
+      if (!contentInput.value) {
+        contentfauxCursor.style.display = "block";
+      }
+    });
 
-	const senderAddressInput = document.getElementById("sender_address");
-	const senderAddressfauxCursor = document.getElementById("sender_address-faux_cursor");
-	senderAddressInput.addEventListener("input", () => {
-		if (senderAddressInput.value) {
-			senderAddressfauxCursor.style.display = "none";
-		} else {
-			senderAddressfauxCursor.style.display = "block";
-		}
-	});
-	senderAddressInput.addEventListener("focus", () => {
-		senderAddressfauxCursor.style.display = "none";
-	});
-	senderAddressInput.addEventListener("blur", () => {
-		if (!senderAddressInput.value) {
-			senderAddressfauxCursor.style.display = "block";
-		}
-	});
-	const contentInput = document.getElementById("content");
-	const contentfauxCursor = document.getElementById("content-faux_cursor");
-	contentInput.addEventListener("input", () => {
-		if (contentInput.value) {
-			contentfauxCursor.style.display = "none";
-		} else {
-			contentfauxCursor.style.display = "block";
-		}
-	});
-	contentInput.addEventListener("focus", () => {
-		contentfauxCursor.style.display = "none";
-	});
-	contentInput.addEventListener("blur", () => {
-		if (!contentInput.value) {
-			contentfauxCursor.style.display = "block";
-		}
-	});
+    // Contact request below, trying to use as little BS as possible.
 
-	// Contact request below, trying to use as little BS as possible.
+    const form = document.querySelector("#contact-form");
 
-	const form = document.querySelector('#contact-form');
+    form.addEventListener("submit", (event) => {
+      event.preventDefault(); // Prevent the default form submission
 
-	form.addEventListener('submit', (event) => {
-		event.preventDefault(); // Prevent the default form submission
+      const formData = new FormData(form); // Get the form data
+      const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
 
-		const formData = new FormData(form); // Get the form data
-		const xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+      xhr.open("POST", "/contact"); // Set the request method and URL
+      xhr.onload = () => {
+        // Define the callback for a successful request
+        const messageContainer = document.querySelector("#message-container");
 
-		xhr.open('POST', '/contact'); // Set the request method and URL
-		xhr.onload = () => { // Define the callback for a successful request
-			const messageContainer = document.querySelector('#message-container');
+        if (xhr.status === 200) {
+          const successMsg = document.createElement("div");
+          successMsg.classList.add("msg-send-success");
+          successMsg.textContent = `$ Message sent successfully at ${new Date().toISOString()}.`;
+          messageContainer.appendChild(successMsg);
+        } else {
+          const errorMsg = document.createElement("div");
+          errorMsg.classList.add("msg-send-error");
+          const response = JSON.parse(xhr.responseText); // parse the response text as JSON
+          errorMsg.textContent = `$ ERROR sending message: ${response.error}`; // display the error message from the server
 
-			if (xhr.status === 200) {
-				const successMsg = document.createElement('div');
-				successMsg.classList.add('msg-send-success');
-				successMsg.textContent = `$ Message sent successfully at ${new Date().toISOString()}.`;
-				messageContainer.appendChild(successMsg);
-			} else {
-				const errorMsg = document.createElement('div');
-				errorMsg.classList.add('msg-send-error');
-				const response = JSON.parse(xhr.responseText); // parse the response text as JSON
-				errorMsg.textContent = `$ ERROR sending message: ${response.error}`; // display the error message from the server
-
-				messageContainer.appendChild(errorMsg);
-			}
-		};
-		xhr.send(formData); // Send the form data in the request body
-	});
-</script>
-
+          messageContainer.appendChild(errorMsg);
+        }
+      };
+      xhr.send(formData); // Send the form data in the request body
+    });
+  </script>
 </html>
