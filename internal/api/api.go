@@ -64,11 +64,16 @@ func insertVisitorLog(log *logrus.Logger, db *sqlx.DB, request *http.Request) {
 		// I might need to read and process the raw body here
 	}
 
+	realIP := request.Header.Get("X-Real-IP")
+    if realIP == "" {
+        realIP = request.RemoteAddr
+    }
+
     logEntry := VisitorLog{
         ForUser:          1, // Assuming the user ID as me!
         VisitedAt:        time.Now().UTC(),
         URLPath:          request.URL.Path,
-        IPAddress:        request.RemoteAddr,
+        IPAddress:        realIP,
 		/** 
 			I'll probably fill Geolocation/IPISP out later if I can ever be bothered 
 			getting a geo-ip API licence
