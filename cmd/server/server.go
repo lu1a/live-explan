@@ -6,8 +6,11 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 
+	"github.com/lu1a/live-explan/config"
 	"github.com/lu1a/live-explan/internal/api"
 )
 
@@ -20,8 +23,23 @@ func startServerDeps() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 
+	// init data-worker DB connection
+	/**
+		TODO: Remove this entirely.
+		In the future, the data-worker will only be accessible via kafka and API.
+	*/
+	db, err := sqlx.Open("postgres", config.MainConfig.GetString("TSDB_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	pingErr := db.Ping()
+    if pingErr != nil {
+        log.Fatal("Error connecting to the database: ", pingErr)
+    }
+
 	// start the api
-	server := api.Create(stop, log)
+	server := api.Create(stop, db, log)
 
 	// execute more code here...
 
