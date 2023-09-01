@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -106,10 +107,33 @@ func insertVisitorLog(log *logrus.Logger, db *sqlx.DB, request *http.Request) {
 	}
 }
 
+func insertNewVisitorLog(log *logrus.Logger, db *sqlx.DB, logEntry *VisitorLog) {
+    query := `
+        INSERT INTO visitor_log (
+            for_user, visited_at, url_path, ip_address, geolocation,
+            ip_isp, browser, operating_system, is_mobile,
+            referer_url, preferred_languages, cookies, body
+        )
+        VALUES (
+            :for_user, :visited_at, :url_path, :ip_address, :geolocation,
+            :ip_isp, :browser, :operating_system, :is_mobile,
+            :referer_url, :preferred_languages, :cookies, :body
+        )
+    `
+
+    _, err := db.NamedExec(query, logEntry)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 var limiter = rate.NewLimiter(rate.Every(time.Hour/10), 1)
 
 func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 	router := chi.NewRouter()
+
+	// TODO: check authentication here
+
 	// Health endpoint
 	router.Get("/health", func(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusOK)
@@ -118,16 +142,14 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 		}
 	})
 
-	router.Get("/favicon.ico", func(writer http.ResponseWriter, request *http.Request) {
-		filePath, err := filepath.Abs("./assets/favicon.ico")
+	router.Post("/visitor-log-entry", func(writer http.ResponseWriter, request *http.Request) {
+		var logEntry VisitorLog
+    	err := json.NewDecoder(request.Body).Decode(&logEntry)
 		if err != nil {
 			log.Fatal(err)
 		}
-		http.ServeFile(writer, request, filePath)
-	})
 
-	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		insertVisitorLog(log, db, request)
+		insertNewVisitorLog(log, db, &logEntry)
 
 		filePath, err := filepath.Abs("./internal/api/pages/faux-terminal.html")
 		if err != nil {
