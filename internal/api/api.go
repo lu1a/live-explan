@@ -12,10 +12,30 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jmoiron/sqlx"
+	"github.com/lu1a/live-explan/config"
 	"github.com/lu1a/live-explan/internal/util"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 )
+
+func checkAuth(request *http.Request) bool {
+	token := request.Header.Get("Authorization")
+	if token == "" {
+		return false
+	}
+	AUTH_TOKENS := strings.Split(config.MainConfig.GetString("AUTH_TOKENS"), ",")
+	token = strings.TrimPrefix(token, "Bearer ")
+
+	found := false
+	for _, whitelistToken := range AUTH_TOKENS {
+		if token == whitelistToken {
+			found = true
+			break
+		}
+	}
+
+	return found
+}
 
 type VisitorLog struct {
     ForUser            int       `db:"for_user"`
@@ -132,8 +152,6 @@ var limiter = rate.NewLimiter(rate.Every(time.Hour/10), 1)
 func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 	router := chi.NewRouter()
 
-	// TODO: check authentication here
-
 	// Health endpoint
 	router.Get("/health", func(writer http.ResponseWriter, request *http.Request) {
 		writer.WriteHeader(http.StatusOK)
@@ -143,6 +161,12 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 	})
 
 	router.Post("/visitor-log-entry", func(writer http.ResponseWriter, request *http.Request) {
+		isAuthed := checkAuth(request)
+		if !isAuthed {
+			http.Error(writer, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		var logEntry VisitorLog
     	err := json.NewDecoder(request.Body).Decode(&logEntry)
 		if err != nil {
@@ -159,6 +183,12 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 	})
 
 	router.Post("/contact", func(writer http.ResponseWriter, request *http.Request) {
+		isAuthed := checkAuth(request)
+		if !isAuthed {
+			http.Error(writer, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
 		insertVisitorLog(log, db, request)
 
 		sender_address := request.FormValue("sender_address")
