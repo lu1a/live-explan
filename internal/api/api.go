@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -174,12 +173,6 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 		}
 
 		insertNewVisitorLog(log, db, &logEntry)
-
-		filePath, err := filepath.Abs("./internal/api/pages/faux-terminal.html")
-		if err != nil {
-			log.Fatal(err)
-		}
-		http.ServeFile(writer, request, filePath)
 	})
 
 	router.Post("/contact", func(writer http.ResponseWriter, request *http.Request) {
@@ -191,15 +184,29 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 
 		insertVisitorLog(log, db, request)
 
-		sender_address := request.FormValue("sender_address")
-		subject := request.FormValue("subject")
-		content := request.FormValue("content")
+		type ContactJSON struct {
+			SenderAddress string `json:"sender_address" validate:"required"`
+			Subject       string `json:"subject" validate:"required"`
+			Content       string `json:"content" validate:"required"`
+		}
+		
+		var contactData ContactJSON
+		err := json.NewDecoder(request.Body).Decode(&contactData)
+		if err != nil {
+			log.Error(err)
+			http.Error(writer, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+	
+		senderAddress := contactData.SenderAddress
+		subject := contactData.Subject
+		content := contactData.Content
 
-		if sender_address == "" || content == "" {
+		if senderAddress == "" || content == "" {
 			http.Error(writer, "{\"error\":\"Required field(s) missing.\"}", http.StatusBadRequest)
 			return
 		}
-		if !util.IsValidEmail(sender_address) {
+		if !util.IsValidEmail(senderAddress) {
 			http.Error(writer, "{\"error\":\"Email address is not valid.\"}", http.StatusBadRequest)
 			return
 		}
@@ -212,7 +219,7 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 			return
 		}
 
-		err := util.SendTelegramMessage(log, sender_address, subject, content)
+		err = util.SendTelegramMessage(log, senderAddress, subject, content)
 		if err != nil {
 			http.Error(writer, "{\"error\":\"Something went wrong with my contacting service!\"}", http.StatusInternalServerError)
 		}
