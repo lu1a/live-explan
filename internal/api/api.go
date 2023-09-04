@@ -37,22 +37,22 @@ func checkAuth(request *http.Request) bool {
 }
 
 type VisitorLog struct {
-    ForUser            int       `db:"for_user"`
-    VisitedAt          time.Time `db:"visited_at"`
-    URLPath            string    `db:"url_path"`
-    IPAddress          string    `db:"ip_address"`
-    Geolocation        string    `db:"geolocation"`
-    IPISP              string    `db:"ip_isp"`
-    Browser            string    `db:"browser"`
-    OperatingSystem    string    `db:"operating_system"`
-    IsMobile           bool      `db:"is_mobile"`
-    RefererURL         string    `db:"referer_url"`
-    PreferredLanguages string    `db:"preferred_languages"`
-    Cookies            string    `db:"cookies"`
-    Body               string    `db:"body"`
+    ForUser            int       `db:"for_user" json:"for_user"`
+    VisitedAt          time.Time `db:"visited_at" json:"visited_at"`
+    URLPath            string    `db:"url_path" json:"url_path"`
+    IPAddress          string    `db:"ip_address" json:"ip_address"`
+    Geolocation        string    `db:"geolocation" json:"geolocation"`
+    IPISP              string    `db:"ip_isp" json:"ip_isp"`
+    Browser            string    `db:"browser" json:"browser"`
+    OperatingSystem    string    `db:"operating_system" json:"operating_system"`
+    IsMobile           bool      `db:"is_mobile" json:"is_mobile"`
+    RefererURL         string    `db:"referer_url" json:"referer_url"`
+    PreferredLanguages string    `db:"preferred_languages" json:"preferred_languages"`
+    Cookies            string    `db:"cookies" json:"cookies"`
+    Body               string    `db:"body" json:"body"`
 }
 
-func insertVisitorLog(log *logrus.Logger, db *sqlx.DB, request *http.Request) {
+func insertVisitorLogFromHere(log *logrus.Logger, db *sqlx.DB, request *http.Request) {
     var cookiesStrBuilder strings.Builder
 	for _, cookie := range request.Cookies() {
 		cookiesStrBuilder.WriteString(fmt.Sprintf("%s: %s\n", cookie.Name, cookie.Value))
@@ -182,7 +182,7 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 			return
 		}
 
-		insertVisitorLog(log, db, request)
+		insertVisitorLogFromHere(log, db, request)
 
 		type ContactJSON struct {
 			SenderAddress string `json:"sender_address" validate:"required"`
