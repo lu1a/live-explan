@@ -2,8 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -50,80 +48,6 @@ type VisitorLog struct {
     PreferredLanguages string    `db:"preferred_languages" json:"preferred_languages"`
     Cookies            string    `db:"cookies" json:"cookies"`
     Body               string    `db:"body" json:"body"`
-}
-
-func insertVisitorLogFromHere(log *logrus.Logger, db *sqlx.DB, request *http.Request) {
-    var cookiesStrBuilder strings.Builder
-	for _, cookie := range request.Cookies() {
-		cookiesStrBuilder.WriteString(fmt.Sprintf("%s: %s\n", cookie.Name, cookie.Value))
-	}
-	cookiesString := cookiesStrBuilder.String()
-
-	bodyContent := ""
-	contentType := strings.TrimSpace(strings.Split(request.Header.Get("Content-Type"), ";")[0])
-
-	switch contentType {
-	case "application/json":
-		// Handle JSON content type
-		bodyBytes, _ := io.ReadAll(request.Body)
-		bodyContent = string(bodyBytes)
-	case "multipart/form-data":
-		err := request.ParseMultipartForm(32 << 20) // Max memory is 32 MB
-		if err != nil {
-			log.Fatal("Unable to parse form", err)
-			return
-		}
-		var formDataStrBuilder strings.Builder
-		for key, values := range request.MultipartForm.Value {
-			formDataStrBuilder.WriteString(fmt.Sprintf("%s: %s\n", key, strings.Join(values, ", ")))
-		}
-
-		bodyContent = formDataStrBuilder.String()
-	default:
-		// TODO: Handle other content types
-		// I might need to read and process the raw body here
-	}
-
-	realIP := request.Header.Get("X-Real-IP")
-    if realIP == "" {
-        realIP = request.RemoteAddr
-    }
-
-    logEntry := VisitorLog{
-        ForUser:          1, // Assuming the user ID as me!
-        VisitedAt:        time.Now().UTC(),
-        URLPath:          request.URL.Path,
-        IPAddress:        realIP,
-		/** 
-			I'll probably fill Geolocation/IPISP out later if I can ever be bothered 
-			getting a geo-ip API licence
-		*/
-		Browser: request.Header.Get("User-Agent"),
-		OperatingSystem: request.Header.Get("Sec-Ch-Ua-Platform"),
-		IsMobile: request.Header.Get("Sec-Ch-Ua-Mobile") == "?1",
-		RefererURL: request.Referer(),
-		PreferredLanguages: request.Header.Get("Accept-Language"),
-		Cookies: cookiesString,
-		Body: bodyContent,
-    }
-
-    query := `
-        INSERT INTO visitor_log (
-            for_user, visited_at, url_path, ip_address, geolocation,
-            ip_isp, browser, operating_system, is_mobile,
-            referer_url, preferred_languages, cookies, body
-        )
-        VALUES (
-            :for_user, :visited_at, :url_path, :ip_address, :geolocation,
-            :ip_isp, :browser, :operating_system, :is_mobile,
-            :referer_url, :preferred_languages, :cookies, :body
-        )
-    `
-
-    _, err := db.NamedExec(query, logEntry)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func insertNewVisitorLog(log *logrus.Logger, db *sqlx.DB, logEntry *VisitorLog) {
@@ -181,8 +105,6 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 			http.Error(writer, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
-
-		insertVisitorLogFromHere(log, db, request)
 
 		type ContactJSON struct {
 			SenderAddress string `json:"sender_address" validate:"required"`
