@@ -112,6 +112,43 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 		}
 	})
 
+	router.Get("/unique-ips-by-country", func(writer http.ResponseWriter, request *http.Request) {
+		isAuthed := checkAuth(request)
+		if !isAuthed {
+			http.Error(writer, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		type CountryCount struct {
+			Country  string `db:"ip_country" json:"country"`
+			IPCount  int    `db:"ip_count" json:"count"`
+		}
+
+		var countryCounts []CountryCount
+		err := db.Select(&countryCounts, 
+			`SELECT
+				ip_country,
+				COUNT(DISTINCT ip_address) AS ip_count
+			FROM
+				visitor_log
+			GROUP BY
+				ip_country
+			ORDER BY
+				ip_count DESC`,
+		)
+		if err != nil {
+			http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
+			log.Fatal(err)
+			return
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(writer).Encode(countryCounts)
+		if err != nil {
+			log.Fatal(err)
+		}
+	})
+
 	router.Post("/visitor-log-entry", func(writer http.ResponseWriter, request *http.Request) {
 		isAuthed := checkAuth(request)
 		if !isAuthed {
