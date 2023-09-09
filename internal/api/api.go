@@ -35,16 +35,17 @@ func checkAuth(request *http.Request) bool {
 }
 
 type VisitorLog struct {
+	ID                 *int      `json:"id"`
     ForUser            int       `db:"for_user" json:"for_user"`
     VisitedAt          time.Time `db:"visited_at" json:"visited_at"`
     URLPath            string    `db:"url_path" json:"url_path"`
     IPAddress          string    `db:"ip_address" json:"ip_address"`
     IPISP              string    `db:"ip_isp" json:"ip_isp"`
-    IPCountry          string    `db:"ip_country" json:"ip_country"`
-    IPCity             string    `db:"ip_city" json:"ip_city"`
-    IPZip              string    `db:"ip_zip" json:"ip_zip"`
-    IPLatitude         string    `db:"ip_latitude" json:"ip_latitude"`
-    IPLongitude        string    `db:"ip_longitude" json:"ip_longitude"`
+    IPCountry          *string   `db:"ip_country" json:"ip_country"`
+    IPCity             *string   `db:"ip_city" json:"ip_city"`
+    IPZip              *string   `db:"ip_zip" json:"ip_zip"`
+    IPLatitude         *string   `db:"ip_latitude" json:"ip_latitude"`
+    IPLongitude        *string   `db:"ip_longitude" json:"ip_longitude"`
     Browser            string    `db:"browser" json:"browser"`
     OperatingSystem    string    `db:"operating_system" json:"operating_system"`
     IsMobile           bool      `db:"is_mobile" json:"is_mobile"`
@@ -86,6 +87,28 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 		writer.WriteHeader(http.StatusOK)
 		if _, writeErr := writer.Write([]byte("OK")); writeErr != nil {
 			log.Error("Error writing OK message:", writeErr)
+		}
+	})
+
+	router.Get("/visitor-log-entries", func(writer http.ResponseWriter, request *http.Request) {
+		isAuthed := checkAuth(request)
+		if !isAuthed {
+			http.Error(writer, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		var visitorLogs []VisitorLog
+		err := db.Select(&visitorLogs, "SELECT * FROM visitor_log")
+		if err != nil {
+			http.Error(writer, "Internal Server Error", http.StatusInternalServerError)
+			log.Fatal(err)
+			return
+		}
+
+		writer.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(writer).Encode(visitorLogs)
+		if err != nil {
+			log.Fatal(err)
 		}
 	})
 
