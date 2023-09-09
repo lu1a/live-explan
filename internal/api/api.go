@@ -39,8 +39,12 @@ type VisitorLog struct {
     VisitedAt          time.Time `db:"visited_at" json:"visited_at"`
     URLPath            string    `db:"url_path" json:"url_path"`
     IPAddress          string    `db:"ip_address" json:"ip_address"`
-    Geolocation        string    `db:"geolocation" json:"geolocation"`
     IPISP              string    `db:"ip_isp" json:"ip_isp"`
+    IPCountry          string    `db:"ip_country" json:"ip_country"`
+    IPCity             string    `db:"ip_city" json:"ip_city"`
+    IPZip              string    `db:"ip_zip" json:"ip_zip"`
+    IPLatitude         string    `db:"ip_latitude" json:"ip_latitude"`
+    IPLongitude        string    `db:"ip_longitude" json:"ip_longitude"`
     Browser            string    `db:"browser" json:"browser"`
     OperatingSystem    string    `db:"operating_system" json:"operating_system"`
     IsMobile           bool      `db:"is_mobile" json:"is_mobile"`
@@ -53,13 +57,15 @@ type VisitorLog struct {
 func insertNewVisitorLog(log *logrus.Logger, db *sqlx.DB, logEntry *VisitorLog) {
     query := `
         INSERT INTO visitor_log (
-            for_user, visited_at, url_path, ip_address, geolocation,
-            ip_isp, browser, operating_system, is_mobile,
+            for_user, visited_at, url_path, ip_address,
+            ip_isp, ip_country, ip_city, ip_zip, ip_latitude,
+			ip_longitude, browser, operating_system, is_mobile,
             referer_url, preferred_languages, cookies, body
         )
         VALUES (
-            :for_user, :visited_at, :url_path, :ip_address, :geolocation,
-            :ip_isp, :browser, :operating_system, :is_mobile,
+            :for_user, :visited_at, :url_path, :ip_address,
+            :ip_isp, :ip_country, :ip_city, :ip_zip, :ip_latitude,
+			:ip_longitude, :browser, :operating_system, :is_mobile,
             :referer_url, :preferred_languages, :cookies, :body
         )
     `
