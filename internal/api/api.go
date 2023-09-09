@@ -131,6 +131,8 @@ func Create(stop chan os.Signal, db *sqlx.DB, log *logrus.Logger) *http.Server {
 				COUNT(DISTINCT ip_address) AS ip_count
 			FROM
 				visitor_log
+			WHERE
+				ip_country IS NOT NULL
 			GROUP BY
 				ip_country
 			ORDER BY
